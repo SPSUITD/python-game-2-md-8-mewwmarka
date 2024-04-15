@@ -1,78 +1,57 @@
 import pygame
-import random
+
+from bubble_hunt.config import bubble_settings
+from bubble_hunt.screen.life import draw_lives
+from bubble_hunt.sprites.factory import SpriteFactory
+from bubble_hunt.sprites.sprite import Sponge, Shampoo, Bubble, Soap
 
 pygame.init()
 
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Пузырьковая охота')
+CLOCK = pygame.time.Clock()
+SCREEN = pygame.display.set_mode(bubble_settings.SCREEN.BACKGROUND.SIZE.to_tuple)
+BACKGROUND_IMAGE = pygame.transform.scale(
+    pygame.image.load(bubble_settings.SCREEN.BACKGROUND.IMAGE).convert(),
+    bubble_settings.SCREEN.BACKGROUND.SIZE.to_tuple
+)
+LIFE_IMAGE = pygame.transform.scale(
+    pygame.image.load(bubble_settings.SCREEN.LIFE_IMAGE.IMAGE).convert_alpha(),
+    bubble_settings.SCREEN.LIFE_IMAGE.SIZE.to_tuple
+)
+pygame.display.set_caption(bubble_settings.SCREEN.DISPLAY_NAME)
 
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+ALL_SPRITES = pygame.sprite.Group()
+BUBBLES = pygame.sprite.Group()
+ENEMIES = pygame.sprite.Group()
 
-lives = 3
-score = 0
+BUBBLES.add(SpriteFactory.generate([Bubble], 10))
+ENEMIES.add(SpriteFactory.generate([Soap, Shampoo, Sponge], 10))
+ALL_SPRITES.add(*ENEMIES.sprites(), *BUBBLES.sprites())
 
-
-bubble_image = pygame.image.load('placeholder.png').convert_alpha()
-soap_image = pygame.image.load('placeholder.png').convert_alpha()
-
-
-# Создание спрайтов
-class Bubble(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.transform.scale(bubble_image, (50, 50))
-        self.rect = self.image.get_rect()
-        self.rect.x = random.randint(0, screen_width - self.rect.width)
-        self.rect.y = random.randint(0, screen_height - self.rect.height)
-
-
-class Soap(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.transform.scale(soap_image, (50, 50))
-        self.rect = self.image.get_rect()
-        self.rect.x = random.randint(0, screen_width - self.rect.width)
-        self.rect.y = random.randint(0, screen_height - self.rect.height)
-
-
-all_sprites = pygame.sprite.Group()
-bubbles = pygame.sprite.Group()
-soaps = pygame.sprite.Group()
-
-for _ in range(10):
-    bubble = Bubble()
-    all_sprites.add(bubble)
-    bubbles.add(bubble)
-
-for _ in range(5):
-    soap = Soap()
-    all_sprites.add(soap)
-    soaps.add(soap)
-
-running = True
-while running:
+LIVES = bubble_settings.GAME.LIVES
+SCORE = 0
+IS_RUNNING = True
+while IS_RUNNING:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            IS_RUNNING = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
-            clicked_bubbles = [b for b in bubbles if b.rect.collidepoint(pos)]
-            clicked_soaps = [s for s in soaps if s.rect.collidepoint(pos)]
+            clicked_bubbles = [b for b in BUBBLES if b.rect.collidepoint(pos)]
+            clicked_enemies = [s for s in ENEMIES if s.rect.collidepoint(pos)]
             for bubble in clicked_bubbles:
                 bubble.kill()
-                score += 1
-            for soap in clicked_soaps:
+                SCORE += 1
+            for soap in clicked_enemies:
                 soap.kill()
-                lives -= 1
-                if lives <= 0:
-                    print("Игра окончена! Ваш счет:", score)
-                    running = False
+                LIVES -= 1
+                if LIVES <= 0:
+                    print("Игра окончена! Ваш счет:", SCORE)
+                    IS_RUNNING = False
 
-    screen.fill(BLACK)
-    all_sprites.draw(screen)
+    ALL_SPRITES.update()
+    SCREEN.blit(BACKGROUND_IMAGE, (0, 0))
+    ALL_SPRITES.draw(SCREEN)
+    draw_lives(screen=SCREEN, lives=LIVES, image=LIFE_IMAGE, start_x=10, start_y=10)
     pygame.display.flip()
-
+    CLOCK.tick(bubble_settings.SCREEN.FPS)
 pygame.quit()

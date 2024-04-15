@@ -10,30 +10,30 @@ class Image(BaseSettings):
 
 class SpritesConfig(BaseSettings):
     BUBBLE: Image = Image(
-        IMAGE='./assets/bubble.png',
+        IMAGE='./bubble_hunt/assets/bubble.png',
         SIZE=Size(width=60, height=60)
     )
     SOAP: Image = Image(
-        IMAGE='./assets/soap.png',
+        IMAGE='./bubble_hunt/assets/soap.png',
         SIZE=Size(width=50, height=50)
     )
     SHAMPOO: Image = Image(
-        IMAGE='./assets/shampoo.png',
+        IMAGE='./bubble_hunt/assets/shampoo.png',
         SIZE=Size(width=90, height=90)
     )
     SPONGE: Image = Image(
-        IMAGE='./assets/sponge.png',
+        IMAGE='./bubble_hunt/assets/sponge.png',
         SIZE=Size(width=70, height=70)
     )
 
 
 class ScreenConfig(BaseSettings):
     BACKGROUND: Image = Image(
-        IMAGE='./assets/background.jpg',
+        IMAGE='./bubble_hunt/assets/background.jpg',
         SIZE=Size(width=800, height=600)
     )
     LIFE_IMAGE: Image = Image(
-        IMAGE='./assets/life.png',
+        IMAGE='./bubble_hunt/assets/life.png',
         SIZE=Size(width=50, height=50)
     )
     DISPLAY_NAME: str = 'Пузырьковая охота'
