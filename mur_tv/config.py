@@ -36,7 +36,8 @@ class ScreenConfig(BaseSettings):
         IMAGE='./assets/life.png',
         SIZE=Size(width=50, height=50)
     )
-    DISPLAY_NAME: str = 'Пузырьковая охота'
+    DISPLAY_NAME: str = 'Мур ТВ'
+    FONT_SIZE: int = 36
     FPS: int = 60
 
 
@@ -50,4 +51,4 @@ class BubbleHuntConfig(BaseSettings):
     GAME: GameConfig = GameConfig()
 
 
-bubble_settings = BubbleHuntConfig()
+MUR_TV_SETTINGS = BubbleHuntConfig()

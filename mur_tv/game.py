@@ -2,54 +2,39 @@ import pygame
 import random
 import sys
 
-from utils.colors import WHITE, BLACK
+# Assuming MUR_TV_SETTINGS is a module that contains your game settings
+from mur_tv.config import MUR_TV_SETTINGS
 
 pygame.init()
 
-screen_width, screen_height = 640, 480
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("МурТв")
+SCREEN = pygame.display.set_mode(MUR_TV_SETTINGS.SCREEN.BACKGROUND.SIZE.to_tuple)
+pygame.display.set_caption(MUR_TV_SETTINGS.SCREEN.DISPLAY_NAME)
+FONT = pygame.font.Font(None, MUR_TV_SETTINGS.SCREEN.FONT_SIZE)
 
+BACKGROUND_IMAGE = pygame.transform.scale(
+    pygame.image.load(MUR_TV_SETTINGS.SCREEN.BACKGROUND.IMAGE),
+    MUR_TV_SETTINGS.SCREEN.BACKGROUND.SIZE.to_tuple
+)
 
-font = pygame.font.Font(None, 36)
+CHANNEL_WITH_MICE = random.randint(1, 10)
+CURRENT_CHANNEL = 1
+KEY_COUNT = 0
+GAME_OVER = False
 
-channel_with_mice = random.randint(1, 10)
-current_channel = 1
-key_count = 0
-game_over = False
+tv_rect = pygame.Rect(278, 172, 318, 172)
 
-
-def draw_text(text, font, color, surface, x, y):
-    textobj = font.render(text, 1, color)
-    textrect = textobj.get_rect()
-    textrect.topleft = (x, y)
-    surface.blit(textobj, textrect)
-
-
-while True:
+running = True
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                current_channel += 1
-                if current_channel > 10:
-                    current_channel = 1
-            elif event.key == pygame.K_LEFT:
-                current_channel -= 1
-                if current_channel < 1:
-                    current_channel = 10
+            running = False
 
-            if current_channel == channel_with_mice:
-                key_count += 1
-                game_over = True
+    SCREEN.blit(BACKGROUND_IMAGE, (0, 0))
+    channel_surface = pygame.Surface((tv_rect.width, tv_rect.height))
+    channel_surface.fill((255, 0, 0))
+    channel_surface.set_alpha(160)
+    SCREEN.blit(channel_surface, tv_rect.topleft)
+    pygame.display.flip()
 
-    screen.fill(BLACK)
-    if not game_over:
-        draw_text(f'Channel: {current_channel}', font, WHITE, screen, 20, 20)
-    else:
-        draw_text("You found the mice!", font, WHITE, screen, 20, 20)
-        draw_text(f"Keys: {key_count}", font, WHITE, screen, 20, 60)
-
-    pygame.display.update()
+pygame.quit()
+sys.exit()
