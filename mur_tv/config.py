@@ -24,6 +24,7 @@ class ScreenConfig(BaseSettings):
         'mur_tv/assets/kitten.mp4',
         'mur_tv/assets/cat_assassin.mp4',
     )
+    MICE_IMAGE: str = 'mur_tv/assets/mice.png'
     DISPLAY_NAME: str = 'Мур ТВ'
     FONT_SIZE: int = 36
     FPS: int = 60
