@@ -1,8 +1,9 @@
 import pygame
 import sys
 
-from main_game.camera import Camera
+from bubble_hunt.game import run_bubble_hunt
 from main_game.peach import Peach
+from mur_tv.game import run_murtv
 from utils.colors import BLACK, WHITE, GREEN
 
 pygame.init()
@@ -46,6 +47,19 @@ background = pygame.transform.scale(background, (screen_width, screen_height))
 collision_map = pygame.image.load('main_game/assets/collision_map.jpg')  # Убедитесь, что размер соответствует
 collision_map = pygame.transform.scale(collision_map, (screen_width, screen_height))  # Масштабируем карту коллизий
 
+tv_zone = pygame.Rect(
+    450,
+    500,
+    100,
+    200
+)
+bath_zone = pygame.Rect(
+    870,
+    450,
+    300,
+    150
+)
+
 
 def game():
     peach = Peach(865, 900, collision_map)
@@ -63,6 +77,16 @@ def game():
 
         screen.blit(background, (0, 0))  # Рисуем фон
         peach.draw(screen)  # Рисуем персонажа
+
+        if peach.rect.colliderect(bath_zone):
+            draw_text('Для игры нажмите E', font, WHITE, screen, screen_width // 2, screen_height - 50)
+            if keys[pygame.K_e]:
+                run_bubble_hunt(screen)
+
+        if peach.rect.colliderect(tv_zone):
+            draw_text('Для игры нажмите E', font, WHITE, screen, screen_width // 2, screen_height - 50)
+            if keys[pygame.K_e]:
+                run_murtv(screen)
 
         pygame.display.update()
 
