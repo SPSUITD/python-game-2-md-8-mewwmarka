@@ -19,12 +19,14 @@ class ScreenConfig(BaseSettings):
         IMAGE='mur_tv/assets/life.png',
         SIZE=Size(width=50, height=50)
     )
-    IMAGES: Sequence[str] = (
-        'mur_tv/assets/gagarin.mp4',
-        'mur_tv/assets/kitten.mp4',
-        'mur_tv/assets/cat_assassin.mp4',
+    MICE_CHANNEL: str = 'mur_tv/assets/mice.mp4'
+    CHANNELS: Sequence[str] = (
+        'mur_tv/assets/channel1.mp4',
+        'mur_tv/assets/channel2.mp4',
+        'mur_tv/assets/channel3.mp4',
+        'mur_tv/assets/channel4.mp4',
+        MICE_CHANNEL
     )
-    MICE_IMAGE: str = 'mur_tv/assets/mice.png'
     DISPLAY_NAME: str = 'Мур ТВ'
     FONT_SIZE: int = 36
     FPS: int = 60

@@ -4,6 +4,7 @@ import sys
 import cv2
 
 from mur_tv.config import MUR_TV_SETTINGS
+from utils.popups import show_popup
 
 pygame.init()
 
@@ -16,11 +17,10 @@ BACKGROUND_IMAGE = pygame.transform.scale(
     MUR_TV_SETTINGS.SCREEN.BACKGROUND.SIZE.to_tuple
 )
 
-caps = [cv2.VideoCapture(path) for path in MUR_TV_SETTINGS.SCREEN.IMAGES]
-mice_image = pygame.image.load(MUR_TV_SETTINGS.SCREEN.MICE_IMAGE)
-mice_image = pygame.transform.scale(mice_image, (50, 50))
-
-channel_with_mice = random.randint(0, len(caps) - 1)
+channel_paths = list(MUR_TV_SETTINGS.SCREEN.CHANNELS)
+random.shuffle(channel_paths)
+caps = [cv2.VideoCapture(path) for path in channel_paths]
+channel_with_mice = channel_paths.index(MUR_TV_SETTINGS.SCREEN.MICE_CHANNEL)
 
 tv_rect = pygame.Rect(278, 172, 318, 172)
 
@@ -38,8 +38,8 @@ def get_frame(cap):
 
 
 CURRENT_VIDEO_INDEX = 0
-MICE_POSITION = None
 RUNNING = True
+WIN = False
 
 while RUNNING:
     for event in pygame.event.get():
@@ -57,11 +57,9 @@ while RUNNING:
         SCREEN.blit(video_surface, tv_rect.topleft)
 
     if CURRENT_VIDEO_INDEX == channel_with_mice:
-        if not MICE_POSITION:
-            mice_x = random.randint(tv_rect.left, tv_rect.right - mice_image.get_width())
-            mice_y = random.randint(tv_rect.top, tv_rect.bottom - mice_image.get_height())
-            MICE_POSITION = (mice_x, mice_y)
-        SCREEN.blit(mice_image, MICE_POSITION)
+        WIN = True
+        show_popup(SCREEN, "Вы нашли мышь! Нажмите Enter для выхода.")
+        break
     pygame.display.flip()
 
 for cap in caps:
