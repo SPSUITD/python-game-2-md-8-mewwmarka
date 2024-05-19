@@ -26,6 +26,9 @@ class FallingSprite(pygame.sprite.Sprite, ABC):
         self.rect.y = random.randint(-100, -50)
         self.speed_y = random.randint(*self.SPEED_RANGE)
 
+    def reset_position(self):
+        self._set_position()
+
     def update(self):
         self.rect.y += self.speed_y
         if self.rect.top > bubble_settings.SCREEN.BACKGROUND.SIZE.height:
