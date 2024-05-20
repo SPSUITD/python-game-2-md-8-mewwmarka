@@ -1,57 +1,61 @@
 import pygame
-
 from bubble_hunt.config import bubble_settings
-from bubble_hunt.screen.life import draw_lives
+from bubble_hunt.screen.life import draw_lives, draw_score
 from bubble_hunt.sprites.factory import SpriteFactory
 from bubble_hunt.sprites.sprite import Sponge, Shampoo, Bubble, Soap
+from utils.popups import show_popup
 
-pygame.init()
 
-CLOCK = pygame.time.Clock()
-SCREEN = pygame.display.set_mode(bubble_settings.SCREEN.BACKGROUND.SIZE.to_tuple)
-BACKGROUND_IMAGE = pygame.transform.scale(
-    pygame.image.load(bubble_settings.SCREEN.BACKGROUND.IMAGE).convert(),
-    bubble_settings.SCREEN.BACKGROUND.SIZE.to_tuple
-)
-LIFE_IMAGE = pygame.transform.scale(
-    pygame.image.load(bubble_settings.SCREEN.LIFE_IMAGE.IMAGE).convert_alpha(),
-    bubble_settings.SCREEN.LIFE_IMAGE.SIZE.to_tuple
-)
-pygame.display.set_caption(bubble_settings.SCREEN.DISPLAY_NAME)
+def run_bubble_hunt(screen):
 
-ALL_SPRITES = pygame.sprite.Group()
-BUBBLES = pygame.sprite.Group()
-ENEMIES = pygame.sprite.Group()
+    clock = pygame.time.Clock()
+    background_image = pygame.transform.scale(
+        pygame.image.load(bubble_settings.SCREEN.BACKGROUND.IMAGE).convert(),
+        bubble_settings.SCREEN.BACKGROUND.SIZE.to_tuple
+    )
+    life_image = pygame.transform.scale(
+        pygame.image.load(bubble_settings.SCREEN.LIFE_IMAGE.IMAGE).convert_alpha(),
+        bubble_settings.SCREEN.LIFE_IMAGE.SIZE.to_tuple
+    )
+    pygame.display.set_caption(bubble_settings.SCREEN.DISPLAY_NAME)
 
-BUBBLES.add(SpriteFactory.generate([Bubble], 10))
-ENEMIES.add(SpriteFactory.generate([Soap, Shampoo, Sponge], 10))
-ALL_SPRITES.add(*ENEMIES.sprites(), *BUBBLES.sprites())
+    font = pygame.font.Font(None, 36)
 
-LIVES = bubble_settings.GAME.LIVES
-SCORE = 0
-IS_RUNNING = True
-while IS_RUNNING:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            IS_RUNNING = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            clicked_bubbles = [b for b in BUBBLES if b.rect.collidepoint(pos)]
-            clicked_enemies = [s for s in ENEMIES if s.rect.collidepoint(pos)]
-            for bubble in clicked_bubbles:
-                bubble.kill()
-                SCORE += 1
-            for soap in clicked_enemies:
-                soap.kill()
-                LIVES -= 1
-                if LIVES <= 0:
-                    print("Игра окончена! Ваш счет:", SCORE)
-                    IS_RUNNING = False
+    all_sprites = pygame.sprite.Group()
+    bubbles = pygame.sprite.Group()
+    enemies = pygame.sprite.Group()
 
-    ALL_SPRITES.update()
-    SCREEN.blit(BACKGROUND_IMAGE, (0, 0))
-    ALL_SPRITES.draw(SCREEN)
-    draw_lives(screen=SCREEN, lives=LIVES, image=LIFE_IMAGE, start_x=10, start_y=10)
-    pygame.display.flip()
-    CLOCK.tick(bubble_settings.SCREEN.FPS)
-pygame.quit()
+    bubbles.add(SpriteFactory.generate([Bubble], 10))
+    enemies.add(SpriteFactory.generate([Soap, Shampoo, Sponge], 10))
+    all_sprites.add(*enemies.sprites(), *bubbles.sprites())
+
+    lives = bubble_settings.GAME.LIVES
+    score = 0
+    is_running = True
+    while is_running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                is_running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                clicked_bubbles = [b for b in bubbles if b.rect.collidepoint(pos)]
+                clicked_enemies = [s for s in enemies if s.rect.collidepoint(pos)]
+                for bubble in clicked_bubbles:
+                    bubble.reset_position()
+                    score += 1
+                    if score >= 25:
+                        show_popup(screen, "Вы лопнули пузыри! Нажмите Enter для выхода.")
+                        is_running = False
+                for soap in clicked_enemies:
+                    soap.kill()
+                    lives -= 1
+                    if lives <= 0:
+                        show_popup(screen, f"Игра окончена! Ваш счет: {score}")
+                        is_running = False
+        all_sprites.update()
+        screen.blit(background_image, (0, 0))
+        all_sprites.draw(screen)
+        draw_lives(screen=screen, lives=lives, image=life_image, start_x=10, start_y=10)
+        draw_score(screen=screen, score=score, font=font, start_x=800 - 150, start_y=10)
+        pygame.display.flip()
+        clock.tick(bubble_settings.SCREEN.FPS)
