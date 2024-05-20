@@ -2,6 +2,7 @@ import pygame
 import sys
 
 from bubble_hunt.game import run_bubble_hunt
+from freezer.game import run_freezer
 from main_game.peach import Peach
 from mur_tv.game import run_murtv
 from utils.colors import BLACK, WHITE, GREEN
@@ -59,6 +60,12 @@ bath_zone = pygame.Rect(
     300,
     150
 )
+freezer_zone = pygame.Rect(
+    1100,
+    150,
+    150,
+    150
+)
 
 
 def game():
@@ -88,8 +95,12 @@ def game():
             if keys[pygame.K_e]:
                 run_murtv(screen)
 
-        pygame.display.update()
+        if peach.rect.colliderect(freezer_zone):
+            draw_text('Для игры нажмите E', font, WHITE, screen, screen_width // 2, screen_height - 50)
+            if keys[pygame.K_e]:
+                run_freezer(screen)
 
+        pygame.display.update()
     pygame.quit()
 
 
