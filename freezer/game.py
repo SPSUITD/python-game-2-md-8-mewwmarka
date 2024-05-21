@@ -2,16 +2,16 @@ import pygame
 import sys
 
 from utils.popups import show_popup
-
+from freezer.screen.life import draw_lives
 
 def run_freezer(screen):
-    # Screen dimensions
+
     screen_width = 800
     screen_height = 600
 
     freezer_surface = pygame.Surface((screen_width, screen_height))
 
-    # Load images
+
     background_img = pygame.image.load('freezer/assets/background.jpg')
     background_img = pygame.transform.scale(background_img, (screen_width, screen_height))
 
@@ -33,7 +33,9 @@ def run_freezer(screen):
     tomato_img = pygame.image.load('freezer/assets/tomato.png')
     tomato_img = pygame.transform.scale(tomato_img, (screen_width // 10, screen_height // 7))
 
-    # Define object positions
+    life_img = pygame.image.load('freezer/assets/life.png')
+    life_img = pygame.transform.scale(life_img, (screen_width // 12, screen_height // 11))
+
     objects = {
         'fish': salmon_img,
         'milk': milk_img,
@@ -55,17 +57,14 @@ def run_freezer(screen):
         'chicken': (250, -5),
     }
 
-    # Font for text
-    font = pygame.font.Font(None, 36)
 
-    # Game variables
     found_items = set()
     lives = 3
     items_to_find = list(objects.keys())
 
     def create_silhouette(image):
         silhouette = pygame.Surface(image.get_size(), pygame.SRCALPHA)
-        silhouette.fill((0, 0, 0, 128))  # Black with 50% transparency
+        silhouette.fill((0, 0, 0, 128))
         image.blit(silhouette, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
         return image
 
@@ -75,7 +74,7 @@ def run_freezer(screen):
             if item not in found_items:
                 freezer_surface.blit(img, object_positions[item])
 
-        # Draw other objects
+
         if 'cake' not in found_items:
             freezer_surface.blit(cake_img, object_positions['cake'])
         if 'cola' not in found_items:
@@ -83,7 +82,7 @@ def run_freezer(screen):
         if 'tomato' not in found_items:
             freezer_surface.blit(tomato_img, object_positions['tomato'])
 
-        # Draw silhouettes
+
         for item, pos in silhouette_positions.items():
             if item in found_items:
                 freezer_surface.blit(objects[item], pos)
@@ -91,16 +90,16 @@ def run_freezer(screen):
                 silhouette = create_silhouette(objects[item].copy())
                 freezer_surface.blit(silhouette, pos)
 
-        lives_text = font.render(f'Lives: {lives}', True, (255, 255, 255))
-        freezer_surface.blit(lives_text, (screen_width - 150, 10))
+
+        draw_lives(freezer_surface, life_img, lives, screen_width - (life_img.get_width() + 10) * lives, 10, life_img.get_width() + 10)
 
         if lives <= 0:
-            show_popup(screen, "Вы проиграли.")
+            show_popup(screen, "Вы проиграли. Нажмите Enter")
         elif len(found_items) == len(items_to_find):
-            show_popup(screen, "Победа!")
+            show_popup(screen, "Победа! Нажмите Enter")
 
     def check_click(pos):
-        global lives
+        nonlocal lives
         items_to_remove = []
         for item, rect_pos in object_positions.items():
             rect = pygame.Rect(rect_pos[0], rect_pos[1], screen_width // 10, screen_height // 10)

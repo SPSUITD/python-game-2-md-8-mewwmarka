@@ -4,6 +4,6 @@ from typing import Sequence
 
 class SpriteFactory:
     @classmethod
-    def generate[T](cls, sprites: type[T] | Sequence[type[T]], count: int) -> T:
+    def generate(cls, sprites: type | Sequence[type], count: int):
         rand_list = random.choices(sprites, k=count)
         return [sprite() for sprite in rand_list]

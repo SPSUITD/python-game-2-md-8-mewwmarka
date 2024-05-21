@@ -9,13 +9,13 @@ def draw_text(surface, text, color, rect, font, aa=True, bkg=None):
     font_height = font.get_linesize()
     total_height = len(lines) * font_height
 
-    # Calculate the starting y position to center the text vertically
+
     y = rect.top + (rect.height - total_height) // 2
 
     for line in lines:
         text_surface = font.render(line, aa, color, bkg)
         text_width = text_surface.get_width()
-        x = rect.left + (rect.width - text_width) // 2  # Center horizontally
+        x = rect.left + (rect.width - text_width) // 2
         surface.blit(text_surface, (x, y))
         y += font_height
 
