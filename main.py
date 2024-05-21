@@ -20,12 +20,10 @@ LIFE_IMAGE = pygame.transform.scale(
 pygame.display.set_caption(bubble_settings.SCREEN.DISPLAY_NAME)
 
 ALL_SPRITES = pygame.sprite.Group()
-BUBBLES = pygame.sprite.Group()
-ENEMIES = pygame.sprite.Group()
-
-BUBBLES.add(SpriteFactory.generate([Bubble], 10))
-ENEMIES.add(SpriteFactory.generate([Soap, Shampoo, Sponge], 10))
-ALL_SPRITES.add(*ENEMIES.sprites(), *BUBBLES.sprites())
+ALL_SPRITES.add(
+    *SpriteFactory.generate([Bubble], 10),
+    *SpriteFactory.generate([Soap, Shampoo, Sponge], 10),
+)
 
 LIVES = bubble_settings.GAME.LIVES
 SCORE = 0
