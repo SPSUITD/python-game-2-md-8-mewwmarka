@@ -11,7 +11,6 @@ def run_freezer(screen):
 
     freezer_surface = pygame.Surface((screen_width, screen_height))
 
-
     background_img = pygame.image.load('freezer/assets/background.jpg')
     background_img = pygame.transform.scale(background_img, (screen_width, screen_height))
 
@@ -57,7 +56,6 @@ def run_freezer(screen):
         'chicken': (250, -5),
     }
 
-
     found_items = set()
     lives = 3
     items_to_find = list(objects.keys())
@@ -74,14 +72,12 @@ def run_freezer(screen):
             if item not in found_items:
                 freezer_surface.blit(img, object_positions[item])
 
-
         if 'cake' not in found_items:
             freezer_surface.blit(cake_img, object_positions['cake'])
         if 'cola' not in found_items:
             freezer_surface.blit(cola_img, object_positions['cola'])
         if 'tomato' not in found_items:
             freezer_surface.blit(tomato_img, object_positions['tomato'])
-
 
         for item, pos in silhouette_positions.items():
             if item in found_items:
@@ -90,27 +86,17 @@ def run_freezer(screen):
                 silhouette = create_silhouette(objects[item].copy())
                 freezer_surface.blit(silhouette, pos)
 
-
         draw_lives(freezer_surface, life_img, lives, screen_width - (life_img.get_width() + 10) * lives, 10, life_img.get_width() + 10)
-
-        if lives <= 0:
-            show_popup(screen, "Вы проиграли. Нажмите Enter")
-        elif len(found_items) == len(items_to_find):
-            show_popup(screen, "Победа! Нажмите Enter")
 
     def check_click(pos):
         nonlocal lives
-        items_to_remove = []
         for item, rect_pos in object_positions.items():
             rect = pygame.Rect(rect_pos[0], rect_pos[1], screen_width // 10, screen_height // 10)
             if rect.collidepoint(pos):
                 if item in items_to_find:
                     found_items.add(item)
-                    items_to_remove.append(item)
                 else:
                     lives -= 1
-        for item in items_to_remove:
-            del object_positions[item]
 
     running = True
     while running:
@@ -125,5 +111,19 @@ def run_freezer(screen):
 
         pygame.display.flip()
 
-        if lives <= 0 or len(found_items) == len(items_to_find):
-            running = False
+        if lives <= 0:
+            show_popup(screen, "Вы проиграли. Нажмите Enter")
+            running = False  # Stop the loop to prevent further updates
+        elif len(found_items) == len(items_to_find):
+            show_popup(screen, "Победа! Нажмите Enter")
+            running = False  # Stop the loop to prevent further updates
+
+    # Ensure the final screen update before returning
+    draw_game()
+    screen.blit(freezer_surface, (0, 0))
+    pygame.display.flip()
+
+    if lives <= 0:
+        return False
+    elif len(found_items) == len(items_to_find):
+        return True

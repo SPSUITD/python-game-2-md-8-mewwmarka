@@ -12,7 +12,6 @@ pygame.init()
 screen_width, screen_height = 1920, 1080
 screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
 
-
 font = pygame.font.Font(None, 74)
 
 menu_image = pygame.image.load('main_game/assets/main_menu.png')
@@ -25,6 +24,10 @@ start_button_height = 300
 start_button_x = menu_image_rect.left + (menu_image_rect.width - start_button_width) // 2
 start_button_y = menu_image_rect.top + (menu_image_rect.height - start_button_height) // 1.8
 start_button_rect = pygame.Rect(start_button_x, start_button_y, start_button_width, start_button_height)
+
+# Load win image
+win_image = pygame.image.load('main_game/assets/win.png')
+win_image = pygame.transform.scale(win_image, (screen_width, screen_height))
 
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
@@ -46,7 +49,6 @@ def main_menu():
                     game()
 
         pygame.display.update()
-
 
 background = pygame.image.load('main_game/assets/map.jpg')
 background = pygame.transform.scale(background, (screen_width, screen_height))
@@ -72,10 +74,57 @@ freezer_zone = pygame.Rect(
     150
 )
 
+key_image = pygame.image.load('main_game/assets/key.png')
+key_image = pygame.transform.scale(key_image, (100, 100))
+
+
+def draw_collected_keys(screen, keys_collected):
+    x_offset = screen_width
+    y_offset = 30
+    if keys_collected['bath_key']:
+        screen.blit(key_image, (x_offset - 250, y_offset))
+    if keys_collected['tv_key']:
+        screen.blit(key_image, (x_offset - 650, y_offset))
+    if keys_collected['freezer_key']:
+        screen.blit(key_image, (x_offset - 1050, y_offset))
+
+
+def draw_winner_screen():
+    screen.fill(BLACK)
+    screen.blit(win_image, (0, 0))
+    pygame.display.update()
+    pygame.time.wait(5000)
+    main_menu()
+
+
+def pause_menu():
+    paused = True
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    paused = False
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    sys.exit()
+
+        screen.fill(BLACK)
+        draw_text('Paused', font, WHITE, screen, screen_width // 2, screen_height // 2 - 50)
+        draw_text('Press ESC to resume or Q to quit', font, WHITE, screen, screen_width // 2, screen_height // 2 + 50)
+        pygame.display.update()
 
 def game():
     peach = Peach(865, 900, collision_map)
     clock = pygame.time.Clock()
+
+    keys_collected = {
+        'bath_key': False,
+        'tv_key': False,
+        'freezer_key': False
+    }
 
     running = True
     while running:
@@ -83,6 +132,9 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pause_menu()
 
         keys = pygame.key.get_pressed()
         peach.update(keys, dt)
@@ -91,19 +143,27 @@ def game():
         peach.draw(screen)
 
         if peach.rect.colliderect(bath_zone):
-            draw_text('Для игры нажмите E', font, WHITE, screen, screen_width // 2, screen_height - 50)
-            if keys[pygame.K_e]:
-                run_bubble_hunt(screen)
+            text = 'Для игры нажмите E' if not keys_collected['bath_key'] else 'Ключ найден!'
+            draw_text(text, font, WHITE, screen, screen_width // 2, screen_height - 50)
+            if not keys_collected['bath_key'] and keys[pygame.K_e] and run_bubble_hunt(screen):
+                keys_collected['bath_key'] = True
 
         if peach.rect.colliderect(tv_zone):
-            draw_text('Для игры нажмите E', font, WHITE, screen, screen_width // 2, screen_height - 50)
-            if keys[pygame.K_e]:
-                run_murtv(screen)
+            text = 'Для игры нажмите E' if not keys_collected['tv_key'] else 'Ключ найден!'
+            draw_text(text, font, WHITE, screen, screen_width // 2, screen_height - 50)
+            if not keys_collected['tv_key'] and keys[pygame.K_e] and run_murtv(screen):
+                keys_collected['tv_key'] = True
 
         if peach.rect.colliderect(freezer_zone):
-            draw_text('Для игры нажмите E', font, WHITE, screen, screen_width // 2, screen_height - 50)
-            if keys[pygame.K_e]:
-                run_freezer(screen)
+            text = 'Для игры нажмите E' if not keys_collected['freezer_key'] else 'Ключ найден!'
+            draw_text(text, font, WHITE, screen, screen_width // 2, screen_height - 50)
+            if not keys_collected['freezer_key'] and keys[pygame.K_e] and run_freezer(screen):
+                keys_collected['freezer_key'] = True
+
+        draw_collected_keys(screen, keys_collected)
+
+        if all(keys_collected.values()):
+            draw_winner_screen()
 
         pygame.display.update()
     pygame.quit()

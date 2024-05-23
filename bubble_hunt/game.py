@@ -45,13 +45,13 @@ def run_bubble_hunt(screen):
                     score += 1
                     if score >= 25:
                         show_popup(screen, "Вы лопнули пузыри! Нажмите Enter для выхода.")
-                        is_running = False
+                        return True
                 for soap in clicked_enemies:
                     soap.kill()
                     lives -= 1
                     if lives <= 0:
                         show_popup(screen, f"Игра окончена! Ваш счет: {score}")
-                        is_running = False
+                        return False
         all_sprites.update()
         screen.blit(background_image, (0, 0))
         all_sprites.draw(screen)

@@ -59,3 +59,4 @@ def run_murtv(screen):
     for cap in caps:
         cap.release()
 
+    return True
