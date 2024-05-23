@@ -25,9 +25,9 @@ start_button_x = menu_image_rect.left + (menu_image_rect.width - start_button_wi
 start_button_y = menu_image_rect.top + (menu_image_rect.height - start_button_height) // 1.8
 start_button_rect = pygame.Rect(start_button_x, start_button_y, start_button_width, start_button_height)
 
-# Load win image
+
 win_image = pygame.image.load('main_game/assets/win.png')
-win_image = pygame.transform.scale(win_image, (screen_width, screen_height))
+win_image = pygame.transform.scale(win_image, (890, 745))
 
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
@@ -79,19 +79,19 @@ key_image = pygame.transform.scale(key_image, (100, 100))
 
 
 def draw_collected_keys(screen, keys_collected):
-    x_offset = screen_width
+    x_offset = screen_width - 150
     y_offset = 30
-    if keys_collected['bath_key']:
-        screen.blit(key_image, (x_offset - 250, y_offset))
-    if keys_collected['tv_key']:
-        screen.blit(key_image, (x_offset - 650, y_offset))
-    if keys_collected['freezer_key']:
-        screen.blit(key_image, (x_offset - 1050, y_offset))
+    progress_font = pygame.font.Font(None, 48)
 
+    collected_count = sum(keys_collected.values())
+    progress_text = f'{collected_count}/3'
+
+    screen.blit(key_image, (x_offset, y_offset))
+    draw_text(progress_text, progress_font, WHITE, screen, x_offset + 50, y_offset + 100)
 
 def draw_winner_screen():
     screen.fill(BLACK)
-    screen.blit(win_image, (0, 0))
+    screen.blit(win_image, (512, 167))
     pygame.display.update()
     pygame.time.wait(5000)
     main_menu()

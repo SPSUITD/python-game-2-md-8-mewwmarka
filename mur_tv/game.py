@@ -4,9 +4,6 @@ import cv2
 
 from mur_tv.config import MUR_TV_SETTINGS
 from utils.popups import show_popup
-
-pygame.display.set_caption(MUR_TV_SETTINGS.SCREEN.DISPLAY_NAME)
-
 BACKGROUND_IMAGE = pygame.transform.scale(
     pygame.image.load(MUR_TV_SETTINGS.SCREEN.BACKGROUND.IMAGE),
     MUR_TV_SETTINGS.SCREEN.BACKGROUND.SIZE.to_tuple

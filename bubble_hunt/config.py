@@ -36,7 +36,6 @@ class ScreenConfig(BaseSettings):
         IMAGE='./bubble_hunt/assets/life.png',
         SIZE=Size(width=50, height=50)
     )
-    DISPLAY_NAME: str = 'Пузырьковая охота'
     FPS: int = 60
 
 

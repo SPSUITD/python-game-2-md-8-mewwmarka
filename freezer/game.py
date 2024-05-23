@@ -112,16 +112,12 @@ def run_freezer(screen):
         pygame.display.flip()
 
         if lives <= 0:
-            show_popup(screen, "Вы проиграли. Нажмите Enter")
-            running = False  # Stop the loop to prevent further updates
+            show_popup(screen, "Вы проиграли. Нажмите Enter для выхода.")
+            running = False
         elif len(found_items) == len(items_to_find):
-            show_popup(screen, "Победа! Нажмите Enter")
-            running = False  # Stop the loop to prevent further updates
+            show_popup(screen, "Победа! Нажмите Enter для выхода.")
+            running = False
 
-    # Ensure the final screen update before returning
-    draw_game()
-    screen.blit(freezer_surface, (0, 0))
-    pygame.display.flip()
 
     if lives <= 0:
         return False

@@ -17,7 +17,6 @@ def run_bubble_hunt(screen):
         pygame.image.load(bubble_settings.SCREEN.LIFE_IMAGE.IMAGE).convert_alpha(),
         bubble_settings.SCREEN.LIFE_IMAGE.SIZE.to_tuple
     )
-    pygame.display.set_caption(bubble_settings.SCREEN.DISPLAY_NAME)
 
     font = pygame.font.Font(None, 36)
 

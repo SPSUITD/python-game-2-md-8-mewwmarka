@@ -35,6 +35,7 @@ class FallingSprite(pygame.sprite.Sprite, ABC):
             self._set_position()
 
 
+
 class Bubble(FallingSprite):
     SPRITE_CONFIG = bubble_settings.SPRITES.BUBBLE
     SPEED_RANGE = Speed(1, 2)
