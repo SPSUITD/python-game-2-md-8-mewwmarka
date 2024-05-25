@@ -113,13 +113,10 @@ def run_freezer(screen):
 
         if lives <= 0:
             show_popup(screen, "Вы проиграли. Нажмите Enter для выхода.")
-            running = False
+            return False
         elif len(found_items) == len(items_to_find):
             show_popup(screen, "Победа! Нажмите Enter для выхода.")
-            running = False
+            return True
 
 
-    if lives <= 0:
-        return False
-    elif len(found_items) == len(items_to_find):
-        return True
+

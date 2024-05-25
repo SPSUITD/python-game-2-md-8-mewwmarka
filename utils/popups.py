@@ -4,7 +4,6 @@ import pygame
 
 
 def draw_text(surface, text, color, rect, font, aa=True, bkg=None):
-    # Prepare the text lines and calculate total height
     lines = text.splitlines()
     font_height = font.get_linesize()
     total_height = len(lines) * font_height

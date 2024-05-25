@@ -45,8 +45,8 @@ def run_bubble_hunt(screen):
                     if score >= 25:
                         show_popup(screen, "Вы лопнули пузыри! Нажмите Enter для выхода.")
                         return True
-                for soap in clicked_enemies:
-                    soap.kill()
+                for enemy in clicked_enemies:
+                    enemy.kill()
                     lives -= 1
                     if lives <= 0:
                         show_popup(screen, f"Игра окончена! Ваш счет: {score}")

@@ -38,7 +38,7 @@ def draw_text(text, font, color, surface, x, y):
 def main_menu():
     while True:
         screen.fill(BLACK)
-        screen.blit(menu_image, menu_image_rect.topleft)
+        screen.blit(menu_image, menu_image_rect)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -79,15 +79,15 @@ key_image = pygame.transform.scale(key_image, (100, 100))
 
 
 def draw_collected_keys(screen, keys_collected):
-    x_offset = screen_width - 150
-    y_offset = 30
+    x_start = screen_width - 150
+    y_start = 30
     progress_font = pygame.font.Font(None, 48)
 
     collected_count = sum(keys_collected.values())
     progress_text = f'{collected_count}/3'
 
-    screen.blit(key_image, (x_offset, y_offset))
-    draw_text(progress_text, progress_font, WHITE, screen, x_offset + 50, y_offset + 100)
+    screen.blit(key_image, (x_start, y_start))
+    draw_text(progress_text, progress_font, WHITE, screen, x_start + 50, y_start + 100)
 
 def draw_winner_screen():
     screen.fill(BLACK)
